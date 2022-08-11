@@ -45,6 +45,7 @@ public class ValidationItemControllerV1 {
     @PostMapping("/add")
     public String addItem(@ModelAttribute Item item, RedirectAttributes redirectAttributes, Model model) {
         //검증 오류 결과를 보관
+        //어떤 검증에서 오류가 발생했는지(오류가 발생한 필드명을 key로 사용) errors에 정보를 담아둔다
         Map<String, String> errors = new HashMap<>();
 
         //검증 로직
@@ -57,6 +58,7 @@ public class ValidationItemControllerV1 {
         if (item.getQuantity() == null || item.getQuantity() >= 9999) {
             errors.put("quantity", "수량은 최대 9,999 까지 허용합니다.");
         }
+
         //특정 필드가 아닌 복합 룰 검증
         if (item.getPrice() != null && item.getQuantity() != null) {
             //특정 필드의 범위를 넘어서는 검증 로직
@@ -65,11 +67,13 @@ public class ValidationItemControllerV1 {
                 errors.put("globalError", "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재 값 = " + resultPrice);
             }
         }
+
         //검증에 실패하면 다시 입력 폼으로
-        if (!errors.isEmpty()) {
+        if (!errors.isEmpty()) {    //검증에서 오류 메시지가 하나라도 있으면
             log.info("errors={}", errors);
             model.addAttribute("errors", errors);
             return "validation/v1/addForm";
+            // model에 errors를 담고, 입력폼이 있는 뷰 템플릿으로 보낸다
         }
 
         //성공 로직
