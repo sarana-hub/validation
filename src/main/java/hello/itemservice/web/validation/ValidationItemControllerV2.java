@@ -19,7 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 
-@Slf4j      //로그 출력 위해
+@Slf4j
 @Controller
 @RequestMapping("/validation/v2/items")
 @RequiredArgsConstructor
@@ -58,12 +58,12 @@ public class ValidationItemControllerV2 {
     //@PostMapping("/add")
     public String addItemV1(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         //검증 로직
-        if (!StringUtils.hasText(item.getItemName())) {
-            //필드 오류 - FieldError
+        if (!StringUtils.hasText(item.getItemName())) { //필드 오류 - FieldError
+            //필드에 오류가 있으면 FieldError 객체를 생성해서 bindingResult 에 담아둔다
+            //FieldError 생성자: FieldError(@ModelAttribute 이름, 오류가 발생한 필드 이름, 오류 기본 메시지)
             bindingResult.addError(new FieldError("item", "itemName", "상품 이름은 필수입니다."));
         }
-        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() >
-                1000000) {
+        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
             bindingResult.addError(new FieldError("item", "price", "가격은 1,000 ~ 1,000,000 까지 허용합니다."));
         }
         if (item.getQuantity() == null || item.getQuantity() > 10000) {
@@ -72,8 +72,9 @@ public class ValidationItemControllerV2 {
         //특정 필드 예외가 아닌 전체 예외
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();
-            if (resultPrice < 10000) {
-                //글로벌 오류 - ObjectError
+            if (resultPrice < 10000) { //글로벌 오류 - ObjectError
+                //특정 필드를 넘어서는 오류가 있으면 ObjectError 객체를 생성해서 bindingResult 에 담아둔다
+                //ObjectError 생성자:  ObjectError(@ModelAttribute 의 이름,  오류 기본 메시지)
                 bindingResult.addError(new ObjectError("item", "가격 * 수량의 합은 10,000원 이상이어야 합니다. 현재 값 = " + resultPrice));
             }
         }
