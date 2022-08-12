@@ -28,10 +28,11 @@ public class ValidationItemControllerV2 {
     private final ItemRepository itemRepository;
     private final ItemValidator itemValidator;
 
-    @InitBinder
+    @InitBinder //해당 컨트롤러에만 영향을 준다. 글로벌 설정은 별도로 해야한다.
     public void init(WebDataBinder dataBinder) {
-        //log.info("init binder {}", dataBinder);
+        log.info("init binder {}", dataBinder);
         dataBinder.addValidators(itemValidator);
+        //WebDataBinder에 검증기를 추가하면 해당 컨트롤러에서는 검증기를 자동으로 적용할 수 있다
     }
 
     @GetMapping
@@ -222,6 +223,7 @@ public class ValidationItemControllerV2 {
     public String addItemV5(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         itemValidator.validate(item, bindingResult);
+        //ItemValidator를 스프링 빈으로 주입 받아서 "직접 호출"
 
         //검증 실패하면 다시 입력 폼으로
         if (bindingResult.hasErrors()) {
@@ -237,12 +239,13 @@ public class ValidationItemControllerV2 {
 
     @PostMapping("/add")
     public String addItemV6(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        //검증 실패하면 다시 입력 폼으로
+        //검증 대상 앞에 @Validated
+        //@Validated : 검증기를 실행하라는 애노테이션 (WebDataBinder에 등록한 검증기를 찾아서 실행)
+
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
             return "validation/v2/addForm";
         }
-        //성공 로직
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
