@@ -95,12 +95,14 @@ public class ValidationItemControllerV2 {
     public String addItemV2(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         //검증 로직
         if (!StringUtils.hasText(item.getItemName())) {
-            //필드 오류 - FieldError
+            /** FieldError: 오류 발생시 사용자 입력 값을 유지(저장)*/
+            // FieldError 생성자: FieldError(오류가 발생한 객체 이름, 오류 필드,
+            // 사용자가 입력한 값(거절된 값), 타입 오류 같은 바인딩 실패했는지 여부(구분 값),
+            // 메시지 코드, 메시지에서 사용하는 인자, 기본 오류 메시지)
             bindingResult.addError(new FieldError("item", "itemName",
                     item.getItemName(), false, null, null, "상품 이름은 필수입니다."));
         }
-        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() >
-                1000000) {
+        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
             bindingResult.addError(new FieldError("item", "price",
                     item.getPrice(),false, null, null,"가격은 1,000 ~ 1,000,000 까지 허용합니다."));
         }
