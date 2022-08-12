@@ -10,6 +10,8 @@ import static org.assertj.core.api.Assertions.*;
 
 public class MessageCodesResolverTest {
     MessageCodesResolver codesResolver = new DefaultMessageCodesResolver();
+    //MessageCodesResolver: 검증 오류 코드("required")로 "메시지 코드들을 생성"
+    //오류 코드 하나가 아니라 여러 오류 코드를 가질 수 있다-> MessageCodesResolver를 통해 생성된 순서대로 오류 코드를 보관
 
     @Test
     void messageCodesResolverObject() {

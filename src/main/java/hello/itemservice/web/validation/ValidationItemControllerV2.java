@@ -97,8 +97,7 @@ public class ValidationItemControllerV2 {
         if (!StringUtils.hasText(item.getItemName())) {
             /** FieldError: 오류 발생시 사용자 입력 값을 유지(저장)*/
             // FieldError 생성자: FieldError(오류가 발생한 객체 이름, 오류 필드,
-            // 사용자가 입력한 값(거절된 값), 타입 오류 같은 바인딩 실패했는지 여부(구분 값),
-            // 메시지 코드, 메시지에서 사용하는 인자, 기본 오류 메시지)
+            // 사용자가 입력한 값(거절된 값), 타입 오류 같은 바인딩 실패했는지 여부(구분 값), 메시지 코드, 메시지에서 사용하는 인자, 기본 오류 메시지)
             bindingResult.addError(new FieldError("item", "itemName",
                     item.getItemName(), false, null, null, "상품 이름은 필수입니다."));
         }
@@ -142,11 +141,13 @@ public class ValidationItemControllerV2 {
             //필드 오류 - FieldError
             bindingResult.addError(new FieldError("item", "itemName", item.getItemName(), false,
                     new String[]{"required.item.itemName"}, null, null));
+                    //codes: required.item.itemName를 사용해 메시지 코드를 지정.
+                    // 메시지 코드는 배열로 여러 값을 전달할 수 있는데, 순서대로 매칭해서 처음 매칭되는 메시지가 사용된다
         }
-        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() >
-                1000000) {
+        if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
             bindingResult.addError(new FieldError("item", "price", item.getPrice(),false,
                     new String[]{"range.item.price"}, new Object[]{1000, 1000000}, null));
+                    //arguments: Object[]{1000, 1000000} 를 사용해서 코드의 {0} , {1} 로 치환할 값을 전달
         }
         if (item.getQuantity() == null || item.getQuantity() > 10000) {
             bindingResult.addError(new FieldError("item", "quantity", item.getQuantity(), false,
@@ -178,17 +179,20 @@ public class ValidationItemControllerV2 {
     public String addItemV4(@ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         log.info("objectName={}", bindingResult.getObjectName());
         log.info("target={}", bindingResult.getTarget());
+        // BindingResult는 본인이 검증해야 할 객체인 target 을 알고 있다 ->target(item)에 대한 정보는 없어도 된다
 
         //검증 로직
-        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");
-        /** == */
-        /*위 코드와 똑같음
         if (!StringUtils.hasText(item.getItemName())) {
             bindingResult.rejectValue("itemName", "required");
-        }*/
+        }
+        /*위 코드와 똑같음
+        ValidationUtils.rejectIfEmptyOrWhitespace(bindingResult, "itemName", "required");
+       */
 
         if (item.getPrice() == null || item.getPrice() < 1000 || item.getPrice() > 1000000) {
             bindingResult.rejectValue("price", "range", new Object[]{1000, 1000000}, null);
+            //void rejectValue(오류 필드명, 오류 코드, 오류 메시지에서 {0} 을 치환하기 위한 값, 오류 메시지를 찾을 수 없을 때 사용하는 기본 메시지);
+            //오류 코드는 messageResolver를 위한 오류 코드 (메시지에 등록된 코드가 아님)
         }
         if (item.getQuantity() == null || item.getQuantity() > 10000) {
             bindingResult.rejectValue("quantity", "max", new Object[]{9999}, null);
@@ -198,6 +202,7 @@ public class ValidationItemControllerV2 {
             int resultPrice = item.getPrice() * item.getQuantity();
             if (resultPrice < 10000) {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
+                //void reject(오류 코드, 오류 메시지에서 {0} 을 치환하기 위한 값, 오류 메시지를 찾을 수 없을 때 사용하는 기본 메시지);
             }
         }
         //검증 실패하면 다시 입력 폼으로
