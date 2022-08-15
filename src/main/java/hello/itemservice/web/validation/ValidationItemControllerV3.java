@@ -45,7 +45,7 @@ public class ValidationItemControllerV3 {
         return "validation/v3/addForm";
     }
 
-    @PostMapping("/add")
+    //@PostMapping("/add")
     public String addItem(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         //오브젝트 오류(글로벌 오류) 관련 부분만 직접 자바 코드로 작성
         if (item.getPrice() != null && item.getQuantity() != null) {
@@ -64,9 +64,9 @@ public class ValidationItemControllerV3 {
         return "redirect:/validation/v3/items/{itemId}";
     }
 
-    //@PostMapping("/add")
+    @PostMapping("/add")
     public String addItem2(@Validated(SaveCheck.class) @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-
+        //저장 로직에 SaveCheck Groups 적용
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();
             if (resultPrice < 10000) {
@@ -93,7 +93,7 @@ public class ValidationItemControllerV3 {
         return "validation/v3/editForm";
     }
 
-    @PostMapping("/{itemId}/edit")
+    //@PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @Validated @ModelAttribute Item item, BindingResult bindingResult) {
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();
@@ -109,8 +109,9 @@ public class ValidationItemControllerV3 {
         return "redirect:/validation/v3/items/{itemId}";
     }
 
-    //@PostMapping("/{itemId}/edit")
+    @PostMapping("/{itemId}/edit")
     public String edit2(@PathVariable Long itemId, @Validated(UpdateCheck.class) @ModelAttribute Item item, BindingResult bindingResult) {
+        //수정 로직에 UpdateCheck Groups 적용
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();
             if (resultPrice < 10000) {
