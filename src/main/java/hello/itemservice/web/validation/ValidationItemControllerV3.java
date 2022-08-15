@@ -47,7 +47,6 @@ public class ValidationItemControllerV3 {
 
     @PostMapping("/add")
     public String addItem(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-
         //오브젝트 오류(글로벌 오류) 관련 부분만 직접 자바 코드로 작성
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();
@@ -55,12 +54,10 @@ public class ValidationItemControllerV3 {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
-
         if (bindingResult.hasErrors()) {
             log.info("errors={}", bindingResult);
             return "validation/v3/addForm";
         }
-
         Item savedItem = itemRepository.save(item);
         redirectAttributes.addAttribute("itemId", savedItem.getId());
         redirectAttributes.addAttribute("status", true);
@@ -96,7 +93,7 @@ public class ValidationItemControllerV3 {
         return "validation/v3/editForm";
     }
 
-    //@PostMapping("/{itemId}/edit")
+    @PostMapping("/{itemId}/edit")
     public String edit(@PathVariable Long itemId, @Validated @ModelAttribute Item item, BindingResult bindingResult) {
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();
@@ -104,17 +101,15 @@ public class ValidationItemControllerV3 {
                 bindingResult.reject("totalPriceMin", new Object[]{10000, resultPrice}, null);
             }
         }
-
-        if (bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {    //검증 오류가 발생하면 editForm으로 이동
             log.info("errors={}", bindingResult);
             return "validation/v3/editForm";
         }
-
         itemRepository.update(itemId, item);
         return "redirect:/validation/v3/items/{itemId}";
     }
 
-    @PostMapping("/{itemId}/edit")
+    //@PostMapping("/{itemId}/edit")
     public String edit2(@PathVariable Long itemId, @Validated(UpdateCheck.class) @ModelAttribute Item item, BindingResult bindingResult) {
         if (item.getPrice() != null && item.getQuantity() != null) {
             int resultPrice = item.getPrice() * item.getQuantity();

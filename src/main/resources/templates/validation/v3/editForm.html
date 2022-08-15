@@ -24,6 +24,7 @@
 
     <form action="item.html" th:action th:object="${item}" method="post">
 
+        <!-- 글로벌 오류 메시지 추가 -->
         <div th:if="${#fields.hasGlobalErrors()}">
             <p class="field-error" th:each="err : ${#fields.globalErrors()}"
                th:text="${err}">글로벌 오류 메시지</p>
@@ -36,6 +37,7 @@
         <div>
             <label for="itemName" th:text="#{label.item.itemName}">상품명</label>
             <input type="text" id="itemName" th:field="*{itemName}" th:errorclass="field-error" class="form-control">
+            <!-- 상품명, 가격, 수량 필드에 검증 기능 추가 -->
             <div class="field-error" th:errors="*{itemName}">상품명 오류</div>
         </div>
 

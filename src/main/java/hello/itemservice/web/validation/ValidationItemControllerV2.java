@@ -239,7 +239,7 @@ public class ValidationItemControllerV2 {
 
     @PostMapping("/add")
     public String addItemV6(@Validated @ModelAttribute Item item, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        //검증 대상 앞에 @Validated
+        //검증 대상(Item 모델 객체) 앞에 @Validated
         //@Validated : 검증기를 실행하라는 애노테이션 (WebDataBinder에 등록한 검증기를 찾아서 실행)
 
         if (bindingResult.hasErrors()) {
