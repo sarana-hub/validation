@@ -7,6 +7,8 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+/** Item 수정용 폼*/
+
 @Data
 public class ItemUpdateForm {
     @NotNull
